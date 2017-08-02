@@ -1,0 +1,13 @@
+{
+  "name": "stream-of-redditness",
+  "version": "0.0.1",
+  "description": "",
+  "author": "",
+  "private": true,
+  "main": "main.js",
+  "dependencies": {
+    "expo": "15.0.0",
+    "react": "~15.4.2",
+    "react-native": "github:exponentjs/react-native#sdk-15.0.0"
+  }
+}
