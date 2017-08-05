@@ -1,0 +1,5 @@
+#!/bin/bash
+
+pushd ../browser-extension/resources/public/
+python2 -m SimpleHTTPServer 3449
+popd

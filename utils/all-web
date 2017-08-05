@@ -1,0 +1,5 @@
+#!/bin/bash
+
+nohup ./run_reddit_proxy &>/dev/null &
+nohup ./simple-server &>/dev/null &
+./build-web

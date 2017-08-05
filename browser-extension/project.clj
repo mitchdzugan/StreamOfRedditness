@@ -10,6 +10,7 @@
                  [ns-tracker "0.3.0"]
                  [datascript "0.15.0"]
                  [posh "0.5.5"]
+                 [datival "0.1.0-SNAPSHOT"]
                  [stream-of-redditness.core "0.1.0-SNAPSHOT"]]
 
   :plugins [[lein-cljsbuild "1.1.4"]
@@ -58,7 +59,7 @@
      :compiler     {:main            stream-of-redditness.browser
                     :output-to       "resources/public/js/compiled/app.js"
                     :optimizations   :whitespace
-                    :closure-defines {goog.DEBUG false}
+                    :closure-defines {goog.DEBUG true}
                     :preloads             [devtools.preload]
                     :pretty-print    false}}
 

@@ -1,5 +1,5 @@
 (ns stream-of-redditness.events.auth
-  (:require [stream-of-redditness.datival.core :as dv]
+  (:require [datival.core :as dv]
             [ajax.core :as ajax]
             [stream-of-redditness.conn :as c]))
 

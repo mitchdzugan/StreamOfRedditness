@@ -1,0 +1,6 @@
+#!/bin/bash
+
+pushd ../browser-extension/
+lein clean && lein cljsbuild once min
+lein cljsbuild auto min
+popd

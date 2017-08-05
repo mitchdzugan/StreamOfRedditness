@@ -16,16 +16,17 @@
                  [reagent "0.6.1"]
                  [kibu/pushy "0.3.7"]
                  [cljs-ajax "0.5.8"]
-                 [bidi "2.0.16"]]
+                 [bidi "2.0.16"]
+                 [datival "0.1.0-SNAPSHOT"]]
 
   :plugins [[lein-figwheel "0.5.12"]
             [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
 
-  :source-paths ["src"]
+  :source-paths ["src/clj" "src/cljs"]
 
   :cljsbuild {:builds
               [{:id "dev"
-                :source-paths ["src"]
+                :source-paths ["src/clj" "src/cljs"]
 
                 ;; The presence of a :figwheel configuration here
                 ;; will cause figwheel to inject the figwheel client
@@ -44,7 +45,7 @@
                ;; production. You can build this with:
                ;; lein cljsbuild once min
                {:id "min"
-                :source-paths ["src"]
+                :source-paths ["src/clj" "src/cljs"]
                 :compiler {:output-to "resources/public/js/compiled/stream_of_redditness.js"
                            :main stream-of-redditness.core
                            :optimizations :advanced
@@ -97,7 +98,7 @@
                                   ;; [figwheel-sidecar "0.5.12"]
                                   [com.cemerick/piggieback "0.2.2"]]
                    ;; need to add dev source path here to get user.clj loaded
-                   :source-paths ["src" "dev"]
+                   :source-paths ["src/clj" "src/cljs" "dev"]
                    ;; for CIDER
                    ;; :plugins [[cider/cider-nrepl "0.12.0"]]
                    :repl-options {:nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}

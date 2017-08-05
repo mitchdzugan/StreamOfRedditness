@@ -1,12 +1,13 @@
 (ns stream-of-redditness.events
-  (:require [stream-of-redditness.datival.core :as dv]
+  (:require [datival.core :as dv]
             [ajax.core :as ajax]
             [cemerick.url :as url]
             [stream-of-redditness.conn :as c]
             [stream-of-redditness.events.auth :as auth]
             [stream-of-redditness.events.reddit :as reddit]))
 
-(def stream-of-redditness-events
+(defn stream-of-redditness-events
+  [{:keys [platform] :as config}]
   [dv/dispatch-system
    dv/ajax-system
    (dv/datascript-system {:sync-local-storage {:selector
@@ -56,6 +57,3 @@
              :auth-flow-begin auth/flow-begin
              :auth-error auth/error
              :auth-logout auth/logout}}])
-
-
-(def dispatch (dv/make-event-system true stream-of-redditness-events))

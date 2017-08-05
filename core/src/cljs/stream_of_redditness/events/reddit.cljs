@@ -1,5 +1,5 @@
 (ns stream-of-redditness.events.reddit
-  (:require [stream-of-redditness.datival.core :as dv]
+  (:require [datival.core :as dv]
             [ajax.core :as ajax]
             [datascript.core :as d]
             [stream-of-redditness.conn :as c]

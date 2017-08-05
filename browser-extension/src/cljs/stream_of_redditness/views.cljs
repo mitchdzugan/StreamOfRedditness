@@ -1,7 +1,8 @@
 (ns stream-of-redditness.views
   (:require [stream-of-redditness.conn :as conn]
-            [stream-of-redditness.events :as events]
-            [stream-of-redditness.datival.core :as dv]))
+            [stream-of-redditness.dispatch :as dispatch]
+            [stream-of-redditness.config :as c]
+            [datival.core :as dv]))
 
 (def main-panel
   (dv/make-ui conn/conn
@@ -12,18 +13,19 @@
                                :keys [auth/flow]} :root/auth :as all}]]
                          (cond
                            name [:div
-                                 [:p (str "Welcome " name)]
+                                 [:p (str "Welcome, " name)]
                                  [:button
-                                  {:onClick #(events/dispatch :auth-logout)}
+                                  {:onClick #(dispatch/dispatch :auth-logout)}
                                   "Click To Logout"]]
                            (not ((or flow :complete) #{:error :complete})) [:p (str "Loading... {" flow "}")]
                            :else [:a {:href (str "https://www.reddit.com"
                                                  "/api/v1/authorize"
-                                                 "?client_id=33V8GP9wAN_11g"
+                                                 "?client_id="
+                                                 c/client-id
                                                  "&response_type=code"
                                                  "&state=RANDOM_STRING"
                                                  "&redirect_uri="
-                                                 "http://mdzugan.001www.com"
+                                                 c/redirect-url
                                                  "&duration=permanent"
                                                  "&scope=edit read report save submit vote identity"
                                                  "")} "Click here to login"]))}))
