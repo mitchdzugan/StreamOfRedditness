@@ -4,9 +4,12 @@
                  [reagent "0.6.0"]
                  [re-frame "0.9.4"]
                  [org.clojure/core.async "0.2.391"]
+                 [com.cemerick/url "0.1.1"]
                  [re-com "2.0.0"]
                  [garden "1.3.2"]
                  [ns-tracker "0.3.0"]
+                 [datascript "0.15.0"]
+                 [posh "0.5.5"]
                  [stream-of-redditness.core "0.1.0-SNAPSHOT"]]
 
   :plugins [[lein-cljsbuild "1.1.4"]
@@ -40,8 +43,8 @@
   {:builds
    [{:id           "dev"
      :source-paths ["src/cljs"]
-     :figwheel     {:on-jsload "stream-of-redditness.core/mount-root"}
-     :compiler     {:main                 stream-of-redditness.core
+     :figwheel     {:on-jsload "stream-of-redditness.browser/mount-root"}
+     :compiler     {:main                 stream-of-redditness.browser
                     :output-to            "resources/public/js/compiled/app.js"
                     :output-dir           "resources/public/js/compiled/out"
                     :asset-path           "js/compiled/out"
@@ -52,10 +55,11 @@
 
     {:id           "min"
      :source-paths ["src/cljs"]
-     :compiler     {:main            stream-of-redditness.core
+     :compiler     {:main            stream-of-redditness.browser
                     :output-to       "resources/public/js/compiled/app.js"
-                    :optimizations   :advanced
+                    :optimizations   :whitespace
                     :closure-defines {goog.DEBUG false}
+                    :preloads             [devtools.preload]
                     :pretty-print    false}}
 
     {:id           "test"

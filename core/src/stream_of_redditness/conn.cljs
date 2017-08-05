@@ -1,7 +1,5 @@
-(ns stream-of-redditness.conn)
-
 (ns stream-of-redditness.conn
-  (:require [datival.core :as dv]))
+  (:require [stream-of-redditness.datival.core :as dv]))
 
 (def schema
   {:ident      [:user/name
