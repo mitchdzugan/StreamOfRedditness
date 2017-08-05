@@ -46,9 +46,10 @@
                                        :thread/mores
                                        :thread/last-poll]}]}
     {:root/auth [{:auth/current-user [:user/token]}]}]
-   (fn [_ {{{:keys [polling/is-polling?  polling/threads]} :root/polling
+   (fn [{{{:keys [web-host api-host]} :env}:_config}
+        {{{:keys [polling/is-polling?  polling/threads]} :root/polling
           {{:keys [user/token]} :auth/current-user} :root/auth} :datascript
-           now :now poll-type :user}]
+         now :now poll-type :user}]
      (if-not (and (= :init poll-type) is-polling?)
        (if-let [thread-to-poll (->> threads
                                     (sort-by :thread/last-poll)
@@ -62,7 +63,7 @@
                api-call (cond
                           (and poll-root? token)
                           {:method          :get
-                           :uri             (str "https://localhost:8080/comments/"
+                           :uri             (str "https://" api-host "/comments/"
                                                  (:thread/id thread-to-poll))
                            :response-format (ajax/json-response-format {:keywords? true})
                            :format          :json
@@ -73,14 +74,14 @@
                            :on-failure      [:poll-reddit :loop]}
                           poll-root?
                           {:method          :get
-                           :uri             (str "https://www.reddit.com/comments/"
+                           :uri             (str "https://" web-host "/comments/"
                                                  (:thread/id thread-to-poll) ".json?sort=new")
                            :response-format (ajax/json-response-format {:keywords? true})
                            :on-success      [:reddit-root-poll-res (:thread/id thread-to-poll)]
                            :on-failure      [:poll-reddit :loop]}
                           :else
                           {:method          :get
-                           :uri             "https://localhost:8080/api/morechildren/"
+                           :uri             (str "https://" api-host "/api/morechildren/")
                            :response-format (ajax/json-response-format {:keywords? true})
                            :format          :json
                            :params          {:api_type "json"
@@ -111,7 +112,7 @@
     {:root/polling [:polling/calls-since-poll]}]
    (fn [_ {{{:keys [polling/calls-since-poll]} :root/polling
             {{:keys [user/token]} :auth/current-user} :root/auth} :datascript
-         api-call :user}]
+           api-call :user}]
      (let [calls-since-poll (or calls-since-poll 0)]
        (if (= 0 calls-since-poll)
          {:dispatch [:reddit-api-request api-call]}
@@ -134,19 +135,21 @@
 (def api-request-failed
   (make-datascript-event
    [{:root/auth [{:auth/current-user [:user/refresh]}]}]
-   (fn [_ {{{{:keys [user/refresh]} :auth/current-user} :root/auth} :datascript
+   (fn [{{{:keys [web-host client-auth]} :env}:_config}
+        {{{{:keys [user/refresh]} :auth/current-user} :root/auth} :datascript
            [[api-call on-failure] {:keys [response]}] :user}]
      (cond (and (= "Unauthorized" (:message response))
                 (= 401 (:error response)))
            {:dispatch [:reddit-api-request
                        {:method          :post
-                        :uri             "https://localhost:8080/api/v1/access_token"
+                        :uri             (str "https://" web-host
+                                              "/api/v1/access_token")
                         :response-format (ajax/json-response-format {:keywords? true})
                         :body            (str "grant_type=refresh_token"
                                               "&refresh_token=" refresh)
                         :on-success      [:refresh-success [api-call on-failure]]
                         :on-failure      [:refresh-failed on-failure]
-                        :headers         {:authorization "Basic MzNWOEdQOXdBTl8xMWc6"
+                        :headers         {:authorization (str "Basic " client-auth)
                                           :content-type "application/x-www-form-urlencoded"}}]}
            on-failure {:dispatch on-failure}
            :else {}))))

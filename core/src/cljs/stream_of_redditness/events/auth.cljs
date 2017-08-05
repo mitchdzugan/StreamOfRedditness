@@ -4,29 +4,32 @@
             [stream-of-redditness.conn :as c]))
 
 (def flow-submit-code
-  {:body (fn [_ {code :user}]
+  {:body (fn [{{{:keys [client-auth web-host redirect-url]} :env}:_config}
+              {code :user}]
            {:datascript [{:db/path [[:db/role :anchor] :root/auth]
                           :auth/flow :submit-code}]
             :ajax {:method          :post
-                   :uri             "https://localhost:8080/api/v1/access_token"
+                   :uri             (str "https://" web-host "/api/v1/access_token")
                    :response-format (ajax/json-response-format {:keywords? true})
                    :body            (str
                                      "grant_type=authorization_code"
                                      "&code=" (get code "code")
-                                     "&redirect_uri=http://mdzugan.001www.com")
+                                     "&redirect_uri="
+                                     redirect-url)
                    :on-success      [:auth-flow-token-success]
                    :on-failure      [:auth-error]
-                   :headers         {:authorization "Basic MzNWOEdQOXdBTl8xMWc6"
+                   :headers         {:authorization (str "Basic " client-auth)
                                      :content-type "application/x-www-form-urlencoded"}}})})
 
 (def flow-token-success
-  {:body (fn [_ {[_ {:keys [error access_token refresh_token]}] :user :as all}]
+  {:body (fn [{{{:keys [api-host]} :env}:_config}
+              {[_ {:keys [error access_token refresh_token]}] :user :as all}]
            (if error
              {:dispatch [:auth-error error]}
              {:datascript [{:db/path [[:db/role :anchor] :root/auth]
                             :auth/flow :get-me}]
               :ajax {:method          :get
-                     :uri             "https://localhost:8080/api/v1/me"
+                     :uri             (str "https://" api-host "/api/v1/me")
                      :response-format (ajax/json-response-format {:keywords? true})
                      :on-success      [:auth-flow-me-success [access_token refresh_token]]
                      :on-failure      [:auth-error]
