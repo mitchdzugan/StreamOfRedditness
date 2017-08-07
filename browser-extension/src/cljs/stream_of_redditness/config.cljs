@@ -1,6 +1,7 @@
 (ns stream-of-redditness.config
   (:require [datival.core :as dv]
-            [cemerick.url :as url]))
+            [cemerick.url :as url]
+            [stream-of-redditness.browser.events :as e]))
 
 (def debug?
   ^boolean goog.DEBUG)
@@ -43,6 +44,7 @@
 (def event-config
   {:now #(.getTime (js/Date.))
    :event-systems [route-system
+                   e/pick-rendered-comments-system
                    {:env (if debug?
                            {:web-host "localhost:8080"
                             :api-host "localhost:8080"

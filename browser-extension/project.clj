@@ -51,6 +51,7 @@
                     :asset-path           "js/compiled/out"
                     :source-map-timestamp true
                     :preloads             [devtools.preload]
+                    :closure-output-charset "US-ASCII"
                     :external-config      {:devtools/config {:features-to-install :all}}
                     }}
 
@@ -58,10 +59,17 @@
      :source-paths ["src/cljs"]
      :compiler     {:main            stream-of-redditness.browser
                     :output-to       "resources/public/js/compiled/app.js"
+                    :foreign-libs [{:file "https://cdnjs.cloudflare.com/ajax/libs/markdown.js/0.5.0/markdown.min.js"
+                                    :provides ["markdown.js"]}
+                                   {:file "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.15.2/moment.min.js"
+                                    :provides ["moment.js"]}
+                                   {:file "http://www.myersdaily.org/joseph/javascript/md5.js"
+                                    :provides ["md5.js"]}]
                     :optimizations   :whitespace
                     :closure-defines {goog.DEBUG true}
                     :preloads             [devtools.preload]
-                    :pretty-print    false}}
+                    :closure-output-charset "US-ASCII"
+                    :pretty-print    true}}
 
     {:id           "test"
      :source-paths ["src/cljs" "test/cljs"]

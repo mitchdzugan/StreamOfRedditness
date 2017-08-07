@@ -3,4 +3,13 @@
             [stream-of-redditness.events :as e]
             [stream-of-redditness.config :as c]))
 
-(def dispatch (dv/make-event-system c/debug? (e/stream-of-redditness-events c/event-config)))
+(let [{:keys [dispatch
+              dispatch-sync
+              get-state]} (->> c/event-config
+                               e/stream-of-redditness-events
+                               (dv/make-event-system
+                                false ;; c/debug?
+                                ))]
+  (def dispatch dispatch)
+  (def dispatch-sync dispatch-sync)
+  (def get-state get-state))

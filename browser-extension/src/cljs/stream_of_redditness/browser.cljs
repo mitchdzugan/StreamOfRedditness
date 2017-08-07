@@ -1,5 +1,8 @@
 (ns stream-of-redditness.browser
   (:require [reagent.core :as reagent]
+            [markdown.js]
+            [moment.js]
+            [md5.js]
             [stream-of-redditness.views :as views]
             [stream-of-redditness.events :as events]
             [stream-of-redditness.config :as config]))
