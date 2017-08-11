@@ -53,7 +53,8 @@
 (defn error [_ {error-message :user}]
   {:datascript [{:db/path [[:db/role :anchor] :root/auth]
                  :auth/flow :error
-                 :auth/error error-message}]})
+                 :auth/error error-message}]}
+  )
 
 (defn logout [_ _]
   {:datascript [{:db/retract-path [[:db/role :anchor]

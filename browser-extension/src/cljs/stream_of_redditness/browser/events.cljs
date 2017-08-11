@@ -169,7 +169,8 @@
                                (+ offset (offsetTop id))))
            :pick-rendered-comments {:dispatchers [:set-rendered-comments]
                                     :body pick-rendered-comments-sink}}
-   :events {:component-will-update {:sources [:component-will-update]
+   :events {:commit-rendered-change (fn [state] {:state (dv/deep-merge state {:react {:rendered-change? true}})})
+            :component-will-update {:sources [:component-will-update]
                                     :body (fn [state {{:keys [container-top scroll-position]} :component-will-update}]
                                             {:state (assoc-in state [:react :scroll-position] scroll-position)
                                              :datascript [{:db/path [[:db/role :anchor] :root/render]
@@ -177,10 +178,9 @@
             :component-did-update {:sources [:component-did-update]
                                    :body (fn [state {set-scroll? :component-did-update}]
                                            (if set-scroll?
-                                             {:state (update state :react #(merge % {:rendered-change? true}))
+                                             {:dispatch-after [250 :commit-rendered-change]
                                               :set-scroll (get-in state [:react :scroll-position])}
-                                             {:state (update state :react #(merge % {:rendered-change? true}))
-                                              }))}
+                                             {:dispatch-after [250 :commit-rendered-change]}))}
             :pick-rendered-comments pick-rendered-comments-event
             :set-rendered-comments (fn [{{:keys [queue?]} :react :as state}
                                         {{:keys [comments char-count]} :user}]

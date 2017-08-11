@@ -3,7 +3,7 @@
             [markdown.js]
             [moment.js]
             [md5.js]
-            [stream-of-redditness.views :as views]
+            [stream-of-redditness.views.tree :as tree]
             [stream-of-redditness.events :as events]
             [stream-of-redditness.config :as config]))
 
@@ -13,7 +13,7 @@
     (enable-console-print!)))
 
 (defn mount-root []
-  (reagent/render [views/main-panel]
+  (reagent/render [tree/main-panel]
                   (.getElementById js/document "app")))
 
 (defn ^:export init []

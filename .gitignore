@@ -1,2 +1,4 @@
 utils/reddit-proxy/node_modules/
 core/.cljs_rhino_repl/
+.idea/
+*.iml

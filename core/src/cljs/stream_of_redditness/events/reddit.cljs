@@ -3,7 +3,9 @@
             [ajax.core :as ajax]
             [datascript.core :as d]
             [stream-of-redditness.conn :as c]
-            [stream-of-redditness.util :as util]))
+            [stream-of-redditness.util :as util]
+            [goog.string :as gstring]
+            [cemerick.url :as url]))
 
 (defn make-datascript-event
   ([q f] (make-datascript-event q [:db/role :anchor] f []))
@@ -129,8 +131,15 @@
                                                   (if (contains? cache hash)
                                                     [new-datoms cache]
                                                     [(conj new-datoms
-                                                           (let [parsed (-> js/window .-markdown
-                                                                            (.parse body "Maruku")
+                                                           (let [unescaped (->> body
+                                                                                gstring/unescapeEntities
+                                                                                (#(clojure.string/replace % #"%" "%25"))
+                                                                                clojure.string/split-lines
+                                                                                (map #(url/url-decode %))
+                                                                                (clojure.string/join "\n")
+                                                                                )
+                                                                 parsed (-> js/window .-markdown
+                                                                            (.parse unescaped "Maruku")
                                                                             js->clj)]
                                                              {:db/id (dv/tempid)
                                                               :comment/id id
@@ -166,17 +175,12 @@
                                                   :cache cache
                                                   :root-comment-sizes root-comment-sizes}})
                   :dispatch-after [150 :set-comment-markdown]})
-               (do
-                 (dv/log :datoms-check (concat datoms (map (fn [[id size]]
-                                                             {:db/id [:comment/id id]
-                                                              :comment/size size})
-                                                           root-comment-sizes)))
-                 {:datascript (concat datoms (map (fn [[id size]]
-                                                    {:db/id [:comment/id id]
-                                                     :comment/size size})
-                                                  root-comment-sizes))
-                  :dispatch-after [100 :poll-reddit :loop]
-                  :dispatch [:pick-rendered-comments]}))))})
+               {:datascript (concat datoms (map (fn [[id size]]
+                                                  {:db/id [:comment/id id]
+                                                   :comment/size size})
+                                                root-comment-sizes))
+                :dispatch-after [100 :poll-reddit :loop]
+                :dispatch [:pick-rendered-comments]})))})
 
 (def set-threads
   (make-datascript-event
