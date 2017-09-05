@@ -3,6 +3,7 @@ TODO:
  * ui for settings threads
  * mobile
  * webrtc
+ * move from tree-based ui to flat-list ui
 
 TODO: IO operations that need to be figured out in react-native
  * syncLocalStorage
@@ -10,8 +11,3 @@ TODO: IO operations that need to be figured out in react-native
  * markdown.js (maybe?)
  * md5.js (maybe?)
  * moment.js
-
-Tonight TODO:
- * connect all monitors
- * setup room-control project
- 
